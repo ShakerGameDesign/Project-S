@@ -8,11 +8,11 @@ public class MountainSpawner : MonoBehaviour {
 
     //see the README for more information.
     [Header("Mountain Settings")]
-    [Range(0f, 50.0f)] public float zAxisOffset;
-    [Range(0f, 50.0f)] public float spawningDistance;
-    [Range(-50.0f, 0f)] public float whereToStartGeneration;
-    [Range(10, 0)] public int preGeneratedMountains;
-    [Range(1, 50)] public int mountainLimit;
+    [Range(0f, 50.0f)] public float zAxisOffset = 17.5f;
+    [Range(0f, 50.0f)] public float spawningDistance = 30f;
+    [Range(-50.0f, 0f)] public float whereToStartGeneration = -17.5f;
+    [Range(10, 0)] public int preGeneratedMountains = 10;
+    [Range(1, 50)] public int mountainLimit = 20;
 
     private Renderer mountainRenderer;
     private List<GameObject> activeMountains;

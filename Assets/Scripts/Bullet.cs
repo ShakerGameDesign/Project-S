@@ -11,11 +11,12 @@ public class Bullet : MonoBehaviour
         target.y = 1;
         transform.position = new Vector3(transform.position.x, 1, transform.position.z);
         transform.LookAt(target);
+        Destroy(gameObject, 10);
     }
 
     void Update()
     {
-        transform.position += transform.forward * 15f * Time.deltaTime;
+        transform.position += transform.forward * 30f * Time.deltaTime;
     }
 
     void OnTriggerEnter(Collider other)

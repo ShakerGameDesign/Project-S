@@ -2,8 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Wicca : MonoBehaviour
+public class Wicca : Player
 {
+    [Header("Wicca Settings")]
     public float energyRecoveryRate = 1;
     public float heatReductionRate = 1;
     public float maxEnergy = 100;
@@ -13,19 +14,18 @@ public class Wicca : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        PlayerStart();
     }
 
     // Update is called once per frame
     void Update()
     {
+        PlayerUpdate();
         energy += energyRecoveryRate * Time.deltaTime;
         heat -= heatReductionRate * Time.deltaTime;
         //locks energy and heat to bounds
         energy = Mathf.Min(energy, maxEnergy);
         heat = Mathf.Max(heat, 0);
-
-
     }
 
     public bool useEnergy(float amount)

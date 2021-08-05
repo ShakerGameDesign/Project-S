@@ -2,18 +2,27 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CharacterMovement : MonoBehaviour
+public abstract class Player : MonoBehaviour
 {
-    [SerializeField] float speed = 5;
+    [Header("Player Settings")]
+    [SerializeField] float speed;
+    [SerializeField] int camFollowDist;
+    public GameObject cameraAnchor;
+
     private Rigidbody rb;
+
     // Start is called before the first frame update
-    void Start()
+    public void PlayerStart()
     {
         rb = GetComponent<Rigidbody>();
+        WorldInfo.player = this;
+        transform.position = transform.position.SZ(PathGenerator.pathGen.GetPathCenterAtPos(WorldInfo.camSideViewDistance));
+        WorldInfo.setWorldLoc(transform.position.x + camFollowDist);
+        //WorldInfo.setWorldLoc(transform.position.x + camFollowDist);
     }
 
     // Update is called once per frame
-    void Update()
+    public void PlayerUpdate()
     {
         if (Input.GetKey(KeyCode.W))
         {
@@ -39,6 +48,11 @@ public class CharacterMovement : MonoBehaviour
         else
         {
             rb.velocity = new Vector3(0, rb.velocity.y, rb.velocity.z);
+        }
+
+        if (transform.position.x > WorldInfo.i.worldLocation - camFollowDist)
+        {
+            WorldInfo.setWorldLoc(transform.position.x + camFollowDist);
         }
     }
 }

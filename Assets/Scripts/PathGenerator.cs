@@ -7,7 +7,7 @@ public class PathGenerator : MonoBehaviour
     public static PathGenerator pathGen;
     [SerializeField] float pathDetailGap;
     [SerializeField] int pathDetailCount;
-    [SerializeField] int width;
+    public int width;
     [SerializeField] float noiseSmoothness;
     [SerializeField] float noiseScale;
 
@@ -20,7 +20,7 @@ public class PathGenerator : MonoBehaviour
 
     int triangleIndex;
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         pathGen = this;
         pathDetailCount += 1;
@@ -44,6 +44,13 @@ public class PathGenerator : MonoBehaviour
                 {
                     AddTriangle(vertexIndex, vertexIndex + widthDetail + 1, vertexIndex + widthDetail);
                     AddTriangle(vertexIndex + widthDetail + 1, vertexIndex, vertexIndex + 1);
+                    void AddTriangle(int a, int b, int c)
+                    {
+                        triangles[triangleIndex] = a;
+                        triangles[triangleIndex + 1] = b;
+                        triangles[triangleIndex + 2] = c;
+                        triangleIndex += 3;
+                    }
                 }
 
                 vertexIndex++;
@@ -53,13 +60,6 @@ public class PathGenerator : MonoBehaviour
 
         GetComponent<MeshFilter>().mesh = mesh;
         GetComponent<MeshCollider>().sharedMesh = mesh;
-        void AddTriangle(int a, int b, int c)
-        {
-            triangles[triangleIndex] = a;
-            triangles[triangleIndex + 1] = b;
-            triangles[triangleIndex + 2] = c;
-            triangleIndex += 3;
-        }
     }
 
     // Update is called once per frame
@@ -67,7 +67,7 @@ public class PathGenerator : MonoBehaviour
     {
         for (int i = 0; i < pathDetailCount; i++)
         {
-            float h = GetPathCenterAtPos(pathDetailGap * i);
+            float h = GetPathCenterAtPos((WorldInfo.i.worldLocation - WorldInfo.camSideViewDistance) + (pathDetailGap * i));
             vertices[i * 2].z = h - (width / 2);
             vertices[i * 2 + 1].z = h + (width / 2);
         }
@@ -76,14 +76,17 @@ public class PathGenerator : MonoBehaviour
 
     public float GetPathCenterAtPos(float pos)
     {
-        return (Mathf.PerlinNoise((pos + WorldInfo.i.worldLocation) / noiseSmoothness, 0) * noiseScale) - (noiseScale / 2);
+        //                                \/ offset the path slightly to prevent the division when swapping to negative coordinates
+        return (Mathf.PerlinNoise((pos + 100f) / noiseSmoothness, 0) * noiseScale) - (noiseScale / 2);
     }
 
     public void UpdateMesh()
     {
+        mesh.Clear(true);
         mesh.vertices = vertices;
         mesh.triangles = triangles;
         mesh.uv = uvs;
         mesh.RecalculateNormals();
+        GetComponent<MeshCollider>().sharedMesh = mesh;
     }
 }

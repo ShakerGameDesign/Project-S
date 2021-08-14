@@ -10,7 +10,7 @@ public abstract class Player : MonoBehaviour
     [SerializeField] float baseSpeed;
     [SerializeField] GameObject goHereIndicatorPrefab;
     [SerializeField] GameObject mouseTrackedObject;
-    public GameObject cameraAnchor;
+    //public GameObject cameraAnchor;
 
     private Rigidbody rb;
     private GameObject goHereIndicator;
@@ -42,13 +42,50 @@ public abstract class Player : MonoBehaviour
             mouseTrackedObject.transform.position = hit.point;
             mouseTrackedObject.GetComponent<LineRenderer>().SetPosition(0, transform.position.SY(0.1f));
             mouseTrackedObject.GetComponent<LineRenderer>().SetPosition(1, mouseTrackedObject.transform.position);
-            if (Input.GetMouseButtonDown(1) && hit.collider.tag != "NotRayMoveTo")
+            if (Input.GetMouseButtonDown(1))
             {
-                goHereIndicator.transform.position = hit.point;
+                var hiP = hit.point;
+                if (hit.collider.CompareTag("NotRayMoveTo"))
+                {
+                    hiP = GetClosestPointToEdge(transform.position, hiP);
+                    Vector3 GetClosestPointToEdge(Vector3 startPoint, Vector3 endPoint, int recurNum = 0)
+                    {
+                        Vector3 newStartPoint;
+                        Vector3 newEndPoint;
+
+                        //check if the half way point is on the path or not
+                        var halfPoint = new Vector3((startPoint.x + endPoint.x) / 2, endPoint.y, (startPoint.z + endPoint.z) / 2);
+
+                        var cenP = PathGenerator.pathGen.GetPathCenterAtPos(halfPoint.x);
+
+                        if (cenP + (PathGenerator.pathGen.width / 2) >= halfPoint.z && cenP - (PathGenerator.pathGen.width / 2) <= halfPoint.z)
+                        {
+                            //on path
+                            newStartPoint = halfPoint;
+                            newEndPoint = endPoint;
+                        }
+                        else
+                        {
+                            //off path
+                            newStartPoint = startPoint;
+                            newEndPoint = halfPoint;
+                        }
+
+                        if (Vector3.Distance(newStartPoint, newEndPoint) < 0.05f || recurNum > 100)
+                        {
+                            return newEndPoint;
+                        }
+                        else
+                        {
+                            return GetClosestPointToEdge(newStartPoint, newEndPoint, recurNum + 1);
+                        }
+                    }
+                }
+                goHereIndicator.transform.position = hiP;
                 goHereIndicator.GetComponent<Renderer>().enabled = true;
                 goHereIndicator.GetComponent<LineRenderer>().enabled = true;
-                goHereIndicator.GetComponent<LineRenderer>().SetPosition(1, hit.point.SY(0.1f));
-                moveGoalPos = hit.point;
+                goHereIndicator.GetComponent<LineRenderer>().SetPosition(1, hiP.SY(0.1f));
+                moveGoalPos = hiP;
                 atMoveGoalPos = false;
             }
         }

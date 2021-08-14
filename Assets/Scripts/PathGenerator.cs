@@ -52,6 +52,7 @@ public class PathGenerator : MonoBehaviour
         UpdateMesh();
 
         GetComponent<MeshFilter>().mesh = mesh;
+        GetComponent<MeshCollider>().sharedMesh = mesh;
         void AddTriangle(int a, int b, int c)
         {
             triangles[triangleIndex] = a;

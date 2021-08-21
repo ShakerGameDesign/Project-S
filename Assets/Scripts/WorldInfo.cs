@@ -21,7 +21,7 @@ public class WorldInfo : MonoBehaviour
     public static void setWorldLoc(float nwl)
     {
         i.worldLocation = nwl;
-        i.PathCenAtWorldLoc = PathGenerator.pathGen.GetPathCenterAtPos(camSideViewDistance + i.worldLocation);
+        i.PathCenAtWorldLoc = PathGenerator.pathGen.GetPathCenterAtPos(i.worldLocation);
         i.worldLocAnchorGO.transform.position = i.worldLocAnchorGO.transform.position.SX(nwl);
         i.worldLocAnchorGO.transform.position = i.worldLocAnchorGO.transform.position.SZ(i.PathCenAtWorldLoc);
 

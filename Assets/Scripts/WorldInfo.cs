@@ -16,7 +16,7 @@ public class WorldInfo : MonoBehaviour
 
     public float worldLocation;
     public float PathCenAtWorldLoc;
-    public static int camSideViewDistance = 35;
+    public static int camSideViewDistance = 40;
 
     public static void setWorldLoc(float nwl)
     {
